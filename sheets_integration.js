@@ -2,6 +2,9 @@ const { GoogleSpreadsheet } = require('google-spreadsheet');
 require('dotenv').config();
 const doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID);
 async function connect() {
+    console.log(process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL)
+    console.log('awiefjaowiejfaowiejfaiwef')
+    console.log(process.env.GOOGLE_PRIVATE_KEY)
     await doc.useServiceAccountAuth({
         client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
         private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
