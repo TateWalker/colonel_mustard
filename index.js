@@ -11,6 +11,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const server = app.listen(process.env.PORT || 3000, () => { console.log('Express server listening on port %d', server.address().port); });
 
+var fs = require('fs');
+fs.writeFile(process.env.CREDS_FILE, process.env.GOOGLE_CREDS, (err) => { });
 app.post('/', (req, res) => {
     async function connectSheets(callback) {
         // console.log('connecting to sheets');
