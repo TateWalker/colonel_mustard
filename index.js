@@ -14,6 +14,7 @@ const server = app.listen(process.env.PORT || 3000, () => { console.log('Express
 var fs = require('fs');
 fs.writeFile(process.env.CREDS_FILE, process.env.GOOGLE_CREDS, (err) => { });
 app.post('/', (req, res) => {
+
     async function connectSheets(callback) {
         // console.log('connecting to sheets');
         await sheets.connect();
@@ -37,6 +38,7 @@ app.post('/', (req, res) => {
         return (message.slice(0, -1)); //removes last newline
     }
     let text = req.body.text;
+
     // connectSheets();
     // sheet_data = getSheetData(text);
     // console.log(sheet_data)
@@ -53,26 +55,31 @@ app.post('/', (req, res) => {
         return death;
     }
 
+    if (req.body.token !== process.env.SLACK_VERIFICATION_TOKEN) {
+        res.send({
+            text: 'Not allowed'
+        });
+    } else {
+        connectSheets(function (result) {
+            if (result) {
+                getSheetData(text, function (matched_cells) {
+                    if (matched_cells === null) {
+                        death_message = getDeathMessage();
+                        res.send({
+                            "response-type": "ephemeral",
+                            "text": death_message
+                        });
+                    } else {
 
-    connectSheets(function (result) {
-        if (result) {
-            getSheetData(text, function (matched_cells) {
-                if (matched_cells === null) {
-                    death_message = getDeathMessage();
-                    res.send({
-                        "response-type": "ephemeral",
-                        "text": death_message
-                    });
-                } else {
-
-                    if (Object.keys(matched_cells.length !== 0)) {
-                        corrected_message = formatMessage(matched_cells)
-                        res.send('*' + text + '*\n' + '```' + corrected_message + '```');
+                        if (Object.keys(matched_cells.length !== 0)) {
+                            corrected_message = formatMessage(matched_cells)
+                            res.send('*' + text + '*\n' + '```' + corrected_message + '```');
+                        }
                     }
-                }
-            });
-        }
-    });
+                });
+            }
+        });
+    }
 
     // if (text !== null) {
     //     // res.send('bingo')
