@@ -4,7 +4,7 @@ const doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID);
 async function connect() {
     await doc.useServiceAccountAuth({
         client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY,
+        private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
     });
 }
 async function loadInfo(client_name) {
